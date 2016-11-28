@@ -20,10 +20,11 @@ namespace{
 
             if (I.getOpcode() == Instruction::Add) {
                 auto M = I.getParent()->getParent()->getParent();
+                std::vector<Type*> dualint(2, Type::getInt32Ty(I.getContext()));
                 auto t = FunctionType::get(Type::getInt32Ty(I.getContext()),
-                                           {Type::getInt32Ty(I.getContext()),Type::getInt32Ty(I.getContext())},
+                                           dualint,
                                            false);
-                auto addFunc = cast<Function>(M->getOrInsertFunction("rpiLop_add", t, (Type*)0));
+                auto addFunc = cast<Function>(M->getOrInsertFunction("rpiLop_add", t));
                 auto ci = CallInst::Create(t, addFunc, {I.getOperand(0), I.getOperand(1)}, "");
                 ReplaceInstWithInst(&I, ci);
             }
