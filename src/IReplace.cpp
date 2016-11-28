@@ -1,4 +1,5 @@
 #include "llvm/Pass.h"
+#include "llvm/IR/Type.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/InstVisitor.h"
 #include "llvm/Support/raw_ostream.h"
@@ -7,6 +8,8 @@
 
 using namespace llvm;
 
+// rpiLop_add
+
 namespace{
     struct IReplaceVisitor: public InstVisitor<IReplaceVisitor> {
         unsigned Count;
@@ -14,13 +17,15 @@ namespace{
 
         void visitBinaryOperator(BinaryOperator &I) {
             Count++;
-            BinaryOperator* v1, *v2;
 
             if (I.getOpcode() == Instruction::Add) {
-                v1 = BinaryOperator::Create(Instruction::Mul, I.getOperand(0), ConstantInt::get(I.getType(), -1));
-                v2 = BinaryOperator::Create(Instruction::Sub, v1, I.getOperand(1));
-                ReplaceInstWithInst(&I, v2);
-                v1->insertBefore(v2);
+                auto M = I.getParent()->getParent()->getParent();
+                auto t = FunctionType::get(Type::getInt32Ty(I.getContext()),
+                                           {Type::getInt32Ty(I.getContext()),Type::getInt32Ty(I.getContext())},
+                                           false);
+                auto addFunc = cast<Function>(M->getOrInsertFunction("rpiLop_add", t, (Type*)0));
+                auto ci = CallInst::Create(t, addFunc, {I.getOperand(0), I.getOperand(1)}, "");
+                ReplaceInstWithInst(&I, ci);
             }
         }
     };
