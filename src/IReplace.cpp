@@ -28,6 +28,36 @@ namespace{
                 auto ci = CallInst::Create(t, addFunc, {I.getOperand(0), I.getOperand(1)}, "");
                 ReplaceInstWithInst(&I, ci);
             }
+            else if (I.getOpcode() == Instruction::Sub) {
+                auto M = I.getParent()->getParent()->getParent();
+                std::vector<Type*> dualint(2, Type::getInt32Ty(I.getContext()));
+                auto t = FunctionType::get(Type::getInt32Ty(I.getContext()),
+                                           dualint,
+                                           false);
+                auto addFunc = cast<Function>(M->getOrInsertFunction("rpiLop_subtract", t));
+                auto ci = CallInst::Create(t, addFunc, {I.getOperand(0), I.getOperand(1)}, "");
+                ReplaceInstWithInst(&I, ci);
+            }
+            else if (I.getOpcode() == Instruction::Mul) {
+                auto M = I.getParent()->getParent()->getParent();
+                std::vector<Type*> dualint(2, Type::getInt32Ty(I.getContext()));
+                auto t = FunctionType::get(Type::getInt32Ty(I.getContext()),
+                                           dualint,
+                                           false);
+                auto addFunc = cast<Function>(M->getOrInsertFunction("rpiLop_multiply", t));
+                auto ci = CallInst::Create(t, addFunc, {I.getOperand(0), I.getOperand(1)}, "");
+                ReplaceInstWithInst(&I, ci);
+            }
+            else if (I.getOpcode() == Instruction::UDiv) {
+                auto M = I.getParent()->getParent()->getParent();
+                std::vector<Type*> dualint(2, Type::getInt32Ty(I.getContext()));
+                auto t = FunctionType::get(Type::getInt32Ty(I.getContext()),
+                                           dualint,
+                                           false);
+                auto addFunc = cast<Function>(M->getOrInsertFunction("rpiLop_divide", t));
+                auto ci = CallInst::Create(t, addFunc, {I.getOperand(0), I.getOperand(1)}, "");
+                ReplaceInstWithInst(&I, ci);
+            }
         }
     };
 
