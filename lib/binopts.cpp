@@ -7,7 +7,8 @@
 #define min_float 0x00000000
 #define max_float 0xffffffff
 
-int rpiLop_add(int a, int b) { //formerly b!=0
+extern "C" {
+int rpiLop_add(int a, int b) {
     while (b) {
         int carry = (a & b);
         a = a ^ b;
@@ -127,7 +128,7 @@ uint32_t rpiLop_fpadd2(uint32_t x, uint32_t y){
             result_sign = sign(x);
             result_exponent = exponent(x);
 
-            // subtract and round to 23 bit 
+            // subtract and round to 23 bit
             // this means making room in our 32bit representation
             result_mantissa = (mantissa(x) << 1) - ((mantissa(y) << 1) >> exp_difference );
         }
@@ -135,7 +136,7 @@ uint32_t rpiLop_fpadd2(uint32_t x, uint32_t y){
             result_sign = sign(y);
             result_exponent = exponent(y);
 
-            // subtract and round to 23 bit 
+            // subtract and round to 23 bit
             // this means making room in our 32bit representation
             result_mantissa = (mantissa(y) << 1) - ((mantissa(x) << 1) >> exp_difference);
         }
@@ -207,7 +208,7 @@ uint32_t rpiLop_fpmul2(uint32_t x, uint32_t y){
             break;
         }
     }
-    
+
     uint32_t result = result_sign << 31 | result_exponent << 23 | result_mantissa;
     return result;
 }
@@ -246,7 +247,7 @@ uint32_t rpiLop_fpdiv2(uint32_t x, uint32_t y){
             break;
         }
     }
-    
+
     uint32_t result = result_sign << 31 | result_exponent << 23 | result_mantissa;
     return result;
 }
@@ -257,7 +258,7 @@ float rpiLop_fpmul(float x, float y){
   b.f = y;
 
   result.i = rpiLop_fpmul2(a.i, b.i);
-  return result.f; 
+  return result.f;
 }
 
 float rpiLop_fpdiv(float x, float y){
@@ -266,5 +267,6 @@ float rpiLop_fpdiv(float x, float y){
   b.f = y;
 
   result.i = rpiLop_fpdiv2(a.i, b.i);
-  return result.f; 
+  return result.f;
+}
 }
