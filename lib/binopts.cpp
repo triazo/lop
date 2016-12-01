@@ -1,6 +1,8 @@
-#define exponent(x) (x << 1) >> 24
-#define mantissa(x) (x << 9) >> 9
-#define sign(x) x >> 31
+#include <stdint.h>
+
+#define exponent(x) ((x << 1) >> 24)
+#define mantissa(x) ((x << 9) >> 9)
+#define sign(x) (x >> 31)
 
 #define min_float 0x00000000
 #define max_float 0xffffffff
@@ -59,7 +61,7 @@ typedef union fp_bit_twiddler {
 } UNSAFEFPTHING;
 
 
-uint32_t rpiLop_fpadd2(uint32_t a, uint32_t b){
+uint32_t rpiLop_fpadd2(uint32_t x, uint32_t y){
     uint32_t result_mantissa;
     uint32_t result_exponent;
     uint32_t result_sign;
@@ -172,7 +174,7 @@ float rpiLop_fpsub(float x, float y){
   return result.f;
 }
 
-uint32_t rpiLop_fpmul2(uint32_t a, uint32_t b){
+uint32_t rpiLop_fpmul2(uint32_t x, uint32_t y){
     uint32_t result_mantissa;
     uint32_t result_exponent;
     uint32_t result_sign;
@@ -211,7 +213,7 @@ uint32_t rpiLop_fpmul2(uint32_t a, uint32_t b){
 
 
 
-uint32_t rpiLop_fpdiv2(uint32_t a, uint32_t b){
+uint32_t rpiLop_fpdiv2(uint32_t x, uint32_t y){
     uint32_t result_mantissa;
     uint32_t result_exponent;
     uint32_t result_sign;
