@@ -33,7 +33,8 @@ int rpiLop_subtract(int a, int b)
 int rpiLop_multiply(int a, int b)
 {
   int total = 0;
-  for(;b;total+=rpiLop_add(total,a) ,b--);
+  //for(;b;total+=rpiLop_add(total,a) ,b--);
+  for(;b;total+=a,b--);
   return total;
 }
 
