@@ -58,6 +58,16 @@ namespace{
                 auto ci = CallInst::Create(t, divFunc, {I.getOperand(0), I.getOperand(1)}, "");
                 ReplaceInstWithInst(&I, ci);
             }
+            else if (I.getOpcode() == Instruction::SDiv) {
+                auto M = I.getParent()->getParent()->getParent();
+                std::vector<Type*> dualint(2, Type::getInt32Ty(I.getContext()));
+                auto t = FunctionType::get(Type::getInt32Ty(I.getContext()),
+                                           dualint,
+                                           false);
+                auto sdivFunc = cast<Function>(M->getOrInsertFunction("rpiLop_divide", t));
+                auto ci = CallInst::Create(t, sdivFunc, {I.getOperand(0), I.getOperand(1)}, "");
+                ReplaceInstWithInst(&I, ci);
+            }
             else if (I.getOpcode() == Instruction::FAdd) {
                 auto M = I.getParent()->getParent()->getParent();
                 std::vector<Type*> dualfloat(2, Type::getFloat32Ty(I.getContext()));

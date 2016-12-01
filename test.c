@@ -1,8 +1,8 @@
 #include <stdio.h>
 
 int main() {
-    int x = 40;
-    int y = 5;
+    unsigned int x = 40;
+    unsigned int y = 5;
 
     printf("Addition:       %d + %d = %d\n", x, y, x+y);
     printf("Subtraction:    %d - %d = %d\n", x, y, x-y);
