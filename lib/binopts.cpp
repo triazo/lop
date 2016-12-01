@@ -7,8 +7,8 @@
 #define min_float 0x00000000
 #define max_float 0xffffffff
 
-int rpiLop_add(int a, int b) {
-    while (b!=0) {
+int rpiLop_add(int a, int b) { //formerly b!=0
+    while (b) {
         int carry = (a & b);
         a = a ^ b;
         b = carry << 1;
@@ -20,7 +20,7 @@ int rpiLop_add(int a, int b) {
 int rpiLop_subtract(int a, int b)
 {
   b = -b;
-  while (b!=0)
+  while (b)//formerly b!=0
     {
       int carry = (a & b);
       a = a ^ b;
