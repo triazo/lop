@@ -36,18 +36,18 @@ int rpiLop_multiply(int a, int b)
   return total;
 }
 
-unsigned int rpiLop_divide(unsigned int a, unsigned int b)
+unsigned int rpiLop_divide(unsigned int divident, unsigned int divisor)
 {
   unsigned int quotient,remainder,t;
   int bits_left = 8 * sizeof(unsigned int);
   quotient = divident;
   remainder = 0;
   //for(;bits_left;t=quotient;quotient = rpiLop_add(quotient,quotient); remainder = rpiLop_add(rpiLop_add(remainder,remainder),(quotient<t)),((remainder >= divisor)?remainder = rpiLop_subtract(rem,divisor),quotient= rpiLop_add(quotient,1):quotient=quotient),bits_left--);
-  for(;bits_left;t=quotient;bits_left--)
+  for(;bits_left;t=quotient,bits_left--)
     {
       quotient = rpiLop_add(quotient,quotient); //add
       remainder = rpiLop_add(rpiLop_add(remainder,remainder),(quotient<t));//nested add
-      (remainder >= divisor)?remainder = rpiLop_subtract(rem,divisor),quotient= rpiLop_add(quotient,1):quotient=quotient;//conditional subtract and add
+      (remainder >= divisor)?remainder = rpiLop_subtract(remainder,divisor),quotient= rpiLop_add(quotient,1):quotient=quotient;//conditional subtract and add
     }
 
 
