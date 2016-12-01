@@ -60,7 +60,7 @@ typedef union fp_bit_twiddler {
 
 
 uint32_t rpiLop_fpadd2(uint32_t a, uint32_t b){
-   uint32_t result_mantissa;
+    uint32_t result_mantissa;
     uint32_t result_exponent;
     uint32_t result_sign;
 
@@ -159,7 +159,7 @@ float rpiLop_fpadd(float x, float y){
   a.f = x;
   b.f = y;
 
-  result.i = rpilopfpadd2(a.i, b.i);
+  result.i = rpiLop_fpadd2(a.i, b.i);
   return result.f;
 }
 
@@ -170,4 +170,98 @@ float rpiLop_fpsub(float x, float y){
 
   result.i = rpiLop_fpadd2(a.i, b.i);
   return result.f;
+}
+
+uint32_t rpiLop_fpmul2(uint32_t a, uint32_t b){
+    uint32_t result_mantissa;
+    uint32_t result_exponent;
+    uint32_t result_sign;
+
+    uint32_t different_sign = sign(x) ^ sign(y);
+
+    // catch NaN
+    if (!(exponent(x) ^ 0xFF) && mantissa(x)) return x;
+    if (!(exponent(y) ^ 0xFF) && mantissa(y)) return y;
+
+    // catch Inf
+    if (!(exponent(x) ^ 0xFF)) return x;
+    if (!(exponent(y) ^ 0xFF)) return y;
+
+    result_sign = sign(x) ^ sign(y);
+    result_exponent = exponent(x) + exponent(y) - 127; // subtract bias;
+    result_mantissa = mantissa(x)*mantissa(y);
+
+    //round;
+    if (result_mantissa << 31)  result_mantissa = ((result_mantissa >> 1) + 1);
+    else result_mantissa = (result_mantissa >> 1);
+
+    // normalize mantissa
+    uint32_t temp = result_mantissa << 9;
+    for (uint32_t count = 0; count < 23; ++count) {
+        if (!((temp << count) >> 31)) {
+            result_mantissa <<= ++count; // leading 1, so shift 1 more time
+            result_exponent -= count;
+            break;
+        }
+    }
+    
+    uint32_t result = result_sign << 31 | result_exponent << 23 | result_mantissa;
+    return result;
+}
+
+
+
+uint32_t rpiLop_fpdiv2(uint32_t a, uint32_t b){
+    uint32_t result_mantissa;
+    uint32_t result_exponent;
+    uint32_t result_sign;
+
+    uint32_t different_sign = sign(x) ^ sign(y);
+
+    // catch NaN
+    if (!(exponent(x) ^ 0xFF) && mantissa(x)) return x;
+    if (!(exponent(y) ^ 0xFF) && mantissa(y)) return y;
+
+    // catch Inf
+    if (!(exponent(x) ^ 0xFF)) return x;
+    if (!(exponent(y) ^ 0xFF)) return y;
+
+    result_sign = sign(x) ^ sign(y);
+    result_exponent = exponent(x) - exponent(y) + 127; // add bias;
+    result_mantissa = mantissa(x)/mantissa(y);
+
+    //round;
+    if (result_mantissa << 31)  result_mantissa = ((result_mantissa >> 1) + 1);
+    else result_mantissa = (result_mantissa >> 1);
+
+    // normalize mantissa
+    uint32_t temp = result_mantissa << 9;
+    for (uint32_t count = 0; count < 23; ++count) {
+        if (!((temp << count) >> 31)) {
+            result_mantissa <<= ++count; // leading 1, so shift 1 more time
+            result_exponent -= count;
+            break;
+        }
+    }
+    
+    uint32_t result = result_sign << 31 | result_exponent << 23 | result_mantissa;
+    return result;
+}
+
+float rpiLop_fpmul(float x, float y){
+  UNSAFEFPTHING a, b, result;
+  a.f = x;
+  b.f = y;
+
+  result.i = rpiLop_fpmul2(a.i, b.i);
+  return result.f; 
+}
+
+float rpiLop_fpdiv(float x, float y){
+  UNSAFEFPTHING a, b, result;
+  a.f = x;
+  b.f = y;
+
+  result.i = rpiLop_fpdiv2(a.i, b.i);
+  return result.f; 
 }
