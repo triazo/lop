@@ -20,7 +20,7 @@ int rpiLop_add(int a, int b) {
 
 int rpiLop_subtract(int a, int b)
 {
-  b = -b;
+  b = ~b + 1;
   while (b)//formerly b!=0
     {
       int carry = (a & b);
